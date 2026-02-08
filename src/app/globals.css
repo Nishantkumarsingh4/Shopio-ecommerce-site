@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 10, 10, 10;
+    --background-end-rgb: 10, 10, 10;
+}
+
+html,
+body {
+    color: rgb(var(--foreground-rgb));
+    background: #0a0a0a;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+/* Premium Scrollbar - Apple Style */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(99, 102, 241, 0.6);
+    /* Indigo Glow */
+    border: 2px solid transparent;
+}
+
+/* Modal/Container Specific Scrollbar refinement */
+.overflow-auto,
+.overflow-y-auto {
+    scrollbar-gutter: stable;
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+@keyframes toast-progress {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
+
+.animate-toast-progress {
+    animation: toast-progress 3000ms linear forwards;
+}

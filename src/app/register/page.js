@@ -1,0 +1,143 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
+
+export default function RegisterPage() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Auto login after register or redirect to login
+                router.push("/login?registered=true");
+            } else {
+                setError(data.error || "Registration failed");
+            }
+        } catch (err) {
+            setError("An error occurred. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-[#0a0a0a] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            {/* Background Effects */}
+            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/20 blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-pink-900/20 blur-[120px] pointer-events-none"></div>
+
+            <div className="max-w-md w-full space-y-8 bg-[#121212] p-10 rounded-3xl shadow-2xl border border-white/5 relative z-10">
+                <div>
+                    <div className="mx-auto h-16 w-16 bg-white/5 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10">
+                        <UserPlus className="h-8 w-8 text-indigo-400" />
+                    </div>
+                    <h2 className="mt-8 text-center text-3xl font-black text-white tracking-tight">
+                        Create account
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-gray-400">
+                        Already have an account?{" "}
+                        <Link href="/login" className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
+                            Sign in instead
+                        </Link>
+                    </p>
+                </div>
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="bg-red-900/20 border-l-4 border-red-500 p-4 text-red-400 text-sm rounded-r-md">
+                            {error}
+                        </div>
+                    )}
+                    <div className="rounded-xl shadow-sm -space-y-px bg-[#1a1a1a] overflow-hidden border border-gray-800">
+                        <div>
+                            <label htmlFor="name" className="sr-only">
+                                Full Name
+                            </label>
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                required
+                                className="appearance-none relative block w-full px-4 py-3.5 border-b border-gray-800 placeholder-gray-500 text-white bg-transparent focus:outline-none focus:ring-0 focus:z-10 sm:text-sm font-medium transition-colors hover:bg-white/5"
+                                placeholder="Full Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email-address" className="sr-only">
+                                Email address
+                            </label>
+                            <input
+                                id="email-address"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                className="appearance-none relative block w-full px-4 py-3.5 border-b border-gray-800 placeholder-gray-500 text-white bg-transparent focus:outline-none focus:ring-0 focus:z-10 sm:text-sm font-medium transition-colors hover:bg-white/5"
+                                placeholder="Email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" senior-only="true" className="sr-only">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="new-password"
+                                    required
+                                    className="appearance-none relative block w-full px-4 py-3.5 border-none placeholder-gray-500 text-white bg-transparent focus:outline-none focus:ring-0 focus:z-10 sm:text-sm font-medium transition-colors hover:bg-white/5"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all transform hover:-translate-y-0.5 shadow-lg shadow-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? "Creating account..." : "Sign up"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
