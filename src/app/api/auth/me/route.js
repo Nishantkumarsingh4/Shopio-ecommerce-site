@@ -25,6 +25,17 @@ export async function GET(request) {
 
         return NextResponse.json(user);
     } catch (error) {
+        if (error?.name === 'JsonWebTokenError' || error?.name === 'TokenExpiredError') {
+            const response = NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+            response.cookies.set('token', '', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 0,
+                path: '/',
+            });
+            return response;
+        }
+
         console.error('Profile fetch error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
